@@ -80,15 +80,15 @@ var available_ap_bonusses = {
 		name: 	'勇者斗恶龙',
 		text: 	'勇者斗恶龙获取属性提升30%。【点此技能需求100恶龙魂.重置不退还恶龙魂】',
 		background_item: 	'恶龙',
-		cost: 			1,
-		cost2: 			1,		
+		cost: 			1,		
 		required_items:{
 		},
 		item_bonus:{	
 			体力: 	30,
 			力量: 	30,	
 			战利品: 	30,
-			exp: 	30,					
+			exp: 	30,
+			恶龙: 	30,					
 		},
 		skill_bonus:{
 				
