@@ -1131,21 +1131,22 @@ function test4(obj){
 	
 	
 	function 恶龙之力_1(){
-	var 最高=gamedata['龙の爪']*0.1
-	var 最低=gamedata['龙の鳞']*0.1
-	      var 倍率 = Math.random()*(2+最高)+(1+最低)
-	       
-	      var 恶龙 =  Math.floor(this.gamedata['恶龙之力']*倍率)
-          this.gamedata['coins']+=恶龙
-          if(gamedata['inventory']['物资']>=0){var 恶龙=0}		  
-          document.getElementById("恶龙之力1").innerHTML = "你掠夺了+"+恶龙+"硬币！";		  
-		  this.gamedata['恶龙之力'] =0
-		  
-	if (gamedata['龙の爪'] > 199) {	gamedata['龙の爪'] = 200}	
-	if (gamedata['龙の鳞'] > 199) {	gamedata['龙の鳞'] = 200}
-	if (gamedata['龙の角'] > 99) {	gamedata['龙の角'] = 100}	   	  
-		  
-	};
+    var 最高 = gamedata['龙の爪'] * 0.1;
+    var 最低 = gamedata['龙の鳞'] * 0.1;
+    var 倍率 = Math.random() * (2 + 最高) + (1 + 最低);
+    var 掠夺量 = Math.floor(gamedata['恶龙之力'] * 倍率);
+    
+    // 使用 gain_item 增加硬币（同时更新 coins_gained）
+    gain_item('coins', 掠夺量);
+    
+    document.getElementById("恶龙之力1").innerHTML = "你掠夺了+" + 掠夺量 + "硬币！";
+    gamedata['恶龙之力'] = 0;
+    
+    // 保留原有的等级上限限制
+    if (gamedata['龙の爪'] > 199) { gamedata['龙の爪'] = 200; }
+    if (gamedata['龙の鳞'] > 199) { gamedata['龙の鳞'] = 200; }
+    if (gamedata['龙の角'] > 99)  { gamedata['龙の角'] = 100; }
+};
 	function 恶龙之力_2(){
 
 	
