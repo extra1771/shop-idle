@@ -725,9 +725,9 @@ function check_ticks(){
 	if(time_since_last_tick > 1000)
 	{
 		var seconds_passed = Math.floor(time_since_last_tick / 1000);
-		if(seconds_passed > 1000)
+		if(seconds_passed > 3600)
 		{
-			seconds_passed = 1000;
+			seconds_passed = 3600;
 		}
 		//var ticks_passed = Math.floor(Math.sqrt(time_since_last_tick / 1000));
 		var ticks_passed = seconds_passed;
