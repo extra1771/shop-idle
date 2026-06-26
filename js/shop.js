@@ -335,7 +335,7 @@ function show_value_sold(){
 	var total_value = 0;
 	if(selling_item != 'none' && available_items[selling_item] != undefined)
 	{
-		total_value = to_the_tenth(1,selling_amount) * available_items[selling_item]['value'] * 100;
+		total_value = to_the_tenth(1,selling_amount) * available_items[selling_item]['value'];
 		$('.coins_sold').html(nFormatter(total_value,3));
 	}
 	else
@@ -418,7 +418,7 @@ function update_counter_timers(){
 							counter['item_amount'] -= items_sold;
 							var spare_time = (time_left) - (items_sold * item_time);
 							counter['done_time'] += items_sold * item_time;
-							gain_item('coins', available_items[counter['item_id']]['value'] * items_sold * 100);
+							gain_item('coins', available_items[counter['item_id']]['value'] * items_sold);
 							if($('#content_home').hasClass('active'))
 							{
 								var parsed_floating_text = parse_floating_text('+' + nFormatter(available_items[counter['item_id']]['value'] * items_sold, 1) + '', 'rgba(240, 230, 48,1)');
