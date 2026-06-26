@@ -721,7 +721,7 @@ function check_ticks(){
 	{
 		gamedata['last_production_tick'] = new Date().getTime();
 	}
-	var time_since_last_tick = 1001;
+	var time_since_last_tick = new Date().getTime() - gamedata['last_production_tick'];
 	if(time_since_last_tick > 1000)
 	{
 		var seconds_passed = Math.floor(time_since_last_tick / 1000);
@@ -730,8 +730,7 @@ function check_ticks(){
 			seconds_passed = 1000;
 		}
 		//var ticks_passed = Math.floor(Math.sqrt(time_since_last_tick / 1000));
-		var ticks_passed = seconds_passed + 0;
-		if(ticks_passed > 5){ticks_passed = Math.floor(ticks_passed / 5) + 4;}
+		var ticks_passed = seconds_passed;
 		if(ticks_passed > 10)
 		{
 			show_content('loading');
