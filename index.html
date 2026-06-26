@@ -1304,41 +1304,60 @@ function test4(obj){
 		},next_tick_delay);
 		化身恶龙();
 		if(gamedata['二周目'] !=undefined){二周目项目();}
-		
+		gamedata['last_dragon_tick'] = new Date().getTime();
       
     };
 
-    function 化身恶龙(){
-
-	if(gamedata['恶龙之力'] == undefined){gamedata['恶龙之力'] = 0;}
-	if(gamedata['恶龙之魂'] == undefined){gamedata['恶龙之魂'] = 0;}
-	if(gamedata['龙の爪'] == undefined){gamedata['龙の爪'] = 0;}
-	if(gamedata['龙の鳞'] == undefined){gamedata['龙の鳞'] = 0;}
-	if(gamedata['龙の角'] == undefined){gamedata['龙の角'] = 0;}
-
-	if (gamedata['inventory']['恶龙']<10000){
-	var 恶龙力=gamedata['inventory']['恶龙'];
-	}else{ var 恶龙力=10000 }
-	
-
-	  if (gamedata['inventory']['恶龙']>99&&gamedata['恶龙之力'] <= 10000000) {
-         this.gamedata['恶龙之力']+=(恶龙力*0.1)*(1+gamedata['龙の角']*0.01)*10
-    }
-	  if (gamedata['恶龙之魂']>1&&gamedata['恶龙之力'] <= 10000000) {
-        this.gamedata['恶龙之力']+=(gamedata['恶龙之魂']*0.001)*(1+gamedata['龙の角']*0.01)*10
+   function 化身恶龙(){
+    // 初始化
+    if(gamedata['恶龙之力'] == undefined){ gamedata['恶龙之力'] = 0; }
+    if(gamedata['恶龙之魂'] == undefined){ gamedata['恶龙之魂'] = 0; }
+    if(gamedata['龙の爪'] == undefined){ gamedata['龙の爪'] = 0; }
+    if(gamedata['龙の鳞'] == undefined){ gamedata['龙の鳞'] = 0; }
+    if(gamedata['龙の角'] == undefined){ gamedata['龙の角'] = 0; }
+    if(gamedata['last_dragon_tick'] == undefined){ 
+        gamedata['last_dragon_tick'] = new Date().getTime(); 
     }
 
-	   $('.w1').html(gamedata['inventory']['经验球']);
-	   $('.w2').html(gamedata['inventory']['恶龙']); 
-	   
-	   var 恶龙=gamedata['恶龙之力']
-       $('.w3').html(Math.floor(恶龙));
-	   $('.w4').html(gamedata['恶龙之魂']);
-	   $('.w5').html(gamedata['龙の爪']+"级");
-       $('.w6').html(gamedata['龙の鳞']+"级");
-	   $('.w7').html(gamedata['龙の角']+"级");
-	   
-	};
+    // --- 离线补偿 ---
+    var now = new Date().getTime();
+    var deltaSeconds = Math.floor((now - gamedata['last_dragon_tick']) / 1000);
+    if(deltaSeconds > 5){
+        var 恶龙力 = Math.min(gamedata['inventory']['恶龙'] || 0, 10000);
+        var 龙角倍率 = 1 + (gamedata['龙の角'] || 0) * 0.01;
+        if(恶龙力 > 99){
+            var perSecond = 恶龙力 * 0.1 * 龙角倍率 * 10;
+            var maxGain = 10000000 - gamedata['恶龙之力'];
+            if(maxGain > 0){
+                var gain = Math.min(perSecond * deltaSeconds, maxGain);
+                gamedata['恶龙之力'] += gain;
+            }
+        }
+        gamedata['last_dragon_tick'] = now;
+    }
+
+    // --- 原有在线增长（不变） ---
+    if (gamedata['inventory']['恶龙']<10000){
+        var 恶龙力 = gamedata['inventory']['恶龙'];
+    } else {
+        var 恶龙力 = 10000;
+    }
+    if (gamedata['inventory']['恶龙'] > 99 && gamedata['恶龙之力'] <= 10000000) {
+        this.gamedata['恶龙之力'] += (恶龙力 * 0.1) * (1 + gamedata['龙の角'] * 0.01) * 10;
+    }
+    if (gamedata['恶龙之魂'] > 1 && gamedata['恶龙之力'] <= 10000000) {
+        this.gamedata['恶龙之力'] += (gamedata['恶龙之魂'] * 0.001) * (1 + gamedata['龙の角'] * 0.01) * 10;
+    }
+
+    // --- 更新显示 ---
+    $('.w1').html(gamedata['inventory']['经验球']);
+    $('.w2').html(gamedata['inventory']['恶龙']); 
+    $('.w3').html(Math.floor(gamedata['恶龙之力']));
+    $('.w4').html(gamedata['恶龙之魂']);
+    $('.w5').html(gamedata['龙の爪'] + "级");
+    $('.w6').html(gamedata['龙の鳞'] + "级");
+    $('.w7').html(gamedata['龙の角'] + "级");
+};
 
 
     var int=self.setInterval("zidongbaocun()",2000);
