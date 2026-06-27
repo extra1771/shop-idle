@@ -452,7 +452,9 @@ function update_counter_timers(){
 	
 	if($('#content_home').hasClass('active'))
 	{
-		var parsed_floating_text = parse_floating_text(action_text + ' +' + nFormatter(available_items[counter['item_id']]['value'] * items_sold, 1), 'rgba(240, 230, 48,1)');
+		var value = available_items[counter['item_id']]['value'] * items_sold;
+var sign = (counter['mode'] == 'buy') ? '-' : '+';
+var parsed_floating_text = parse_floating_text(action_text + ' ' + sign + nFormatter(value, 1), 'rgba(240, 230, 48,1)');
 		$('.counter_' + counter_id).append(parsed_floating_text);
 		$('.counter_' + counter_id + ' .counter_item_count').html('x' + nFormatter(counter['item_amount'], 3));
 	}
