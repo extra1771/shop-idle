@@ -2,7 +2,7 @@ var selling_amount = 0;
 var selling_item = 'none';
 var effective_trade_speed = 1;
 var current_counter = 0;
-
+var trade_mode = 'sell';  // 'sell' 出售 | 'buy' 购买
 function show_home(){
 	$('.item_list').html('');
 	var counter_count = check_counter_count();
@@ -336,6 +336,11 @@ function show_value_sold(){
 	if(selling_item != 'none' && available_items[selling_item] != undefined)
 	{
 		total_value = to_the_tenth(1,selling_amount) * available_items[selling_item]['value'];
+		if(trade_mode == 'sell'){
+			$('.coins_sold_label').html('获得硬币：');
+		} else {
+			$('.coins_sold_label').html('花费硬币：');
+		}
 		$('.coins_sold').html(nFormatter(total_value,3));
 	}
 	else
@@ -345,31 +350,52 @@ function show_value_sold(){
 }
 
 function check_can_trade(){
-	if(gamedata['inventory'] != undefined && gamedata['inventory'][selling_item] != undefined && to_the_tenth(1,selling_amount) <= gamedata['inventory'][selling_item])
-	{
-		$('.start_selling_button').removeClass('disabled');
-		return true;
-	}
-	else
-	{
+	if(selling_item == 'none' || available_items[selling_item] == undefined){
 		$('.start_selling_button').addClass('disabled');
 		return false;
 	}
+	var quantity = to_the_tenth(1,selling_amount);
+	var total_cost = quantity * available_items[selling_item]['value'];
+	
+	if(trade_mode == 'sell'){
+		if(get_item_owned_amount(selling_item) >= quantity){
+			$('.start_selling_button').removeClass('disabled');
+			return true;
+		}
+	} else {
+		if(gamedata['coins'] >= total_cost){
+			$('.start_selling_button').removeClass('disabled');
+			return true;
+		}
+	}
+	$('.start_selling_button').addClass('disabled');
+	return false;
 }
 
 function start_selling(){
-	if(check_can_trade())
-	{
-		$('.home_button').removeClass('danger');
-		gamedata['inventory'][selling_item] -= to_the_tenth(1,selling_amount);
+	if(!check_can_trade()) return;
+	
+	var quantity = to_the_tenth(1,selling_amount);
+	var total_cost = quantity * available_items[selling_item]['value'];
+	
+	if(trade_mode == 'sell'){
+		gain_item(selling_item, -quantity);
 		gamedata['counters'][current_counter] = {
-			item_id: 		selling_item,
-			item_amount: 	to_the_tenth(1,selling_amount),
-			done_time: 		current_time(),
-		}
-		//saveToLocalStorage();
-		show_content('home');
+			item_id: selling_item,
+			item_amount: quantity,
+			done_time: current_time(),
+			mode: 'sell'
+		};
+	} else {
+		gamedata['coins'] -= total_cost;
+		gamedata['counters'][current_counter] = {
+			item_id: selling_item,
+			item_amount: quantity,
+			done_time: current_time(),
+			mode: 'buy'
+		};
 	}
+	show_content('home');
 }
 
 function calculate_item_sell_time(value, rarity){
@@ -411,23 +437,26 @@ function update_counter_timers(){
 						var ticks_passed = Math.floor(((time_left) + item_time) / item_time);
 						//if(ticks_passed < 1 && time_left == 0){ticks_passed = 1;}
 						//if(ticks_passed > 10){ticks_passed = Math.ceil(ticks_passed / 10);}
-						if(items_sold >= 1)
-						{
-								//show_content('none');
-							
-							counter['item_amount'] -= items_sold;
-							var spare_time = (time_left) - (items_sold * item_time);
-							counter['done_time'] += items_sold * item_time;
-							gain_item('coins', available_items[counter['item_id']]['value'] * items_sold);
-							if($('#content_home').hasClass('active'))
-							{
-								var parsed_floating_text = parse_floating_text('+' + nFormatter(available_items[counter['item_id']]['value'] * items_sold, 1) + '', 'rgba(240, 230, 48,1)');
-								$('.counter_' + counter_id).append(parsed_floating_text);
-								$('.counter_' + counter_id + ' .counter_item_count').html('x' + nFormatter(counter['item_amount'], 3));
-								//$('.counter_' + counter_id + ' .counter_item_timer').html(seconds_to_time(Math.ceil(spare_time)) + '.');
-								//$('.counter_' + counter_id + ' .counter_item_timer').html(('Sold!'));
-							}
-						}
+						if(items_sold >= 1){
+	if(counter['mode'] == 'sell' || counter['mode'] == undefined){
+		gain_item('coins', available_items[counter['item_id']]['value'] * items_sold);
+		var action_text = '出售';
+	} else {
+		gain_item(counter['item_id'], items_sold);
+		var action_text = '购买';
+	}
+	
+	counter['item_amount'] -= items_sold;
+	var spare_time = (time_left) - (items_sold * item_time);
+	counter['done_time'] += items_sold * item_time;
+	
+	if($('#content_home').hasClass('active'))
+	{
+		var parsed_floating_text = parse_floating_text(action_text + ' +' + nFormatter(available_items[counter['item_id']]['value'] * items_sold, 1), 'rgba(240, 230, 48,1)');
+		$('.counter_' + counter_id).append(parsed_floating_text);
+		$('.counter_' + counter_id + ' .counter_item_count').html('x' + nFormatter(counter['item_amount'], 3));
+	}
+}
 
 						var time_to_sale = Math.ceil(item_time - time_left);
 						if(time_to_sale < 0){time_to_sale = 0;}
@@ -580,7 +609,24 @@ function gain_coins(amount){
 }
 
 
+function toggle_trade_mode(){
+	trade_mode = (trade_mode == 'sell') ? 'buy' : 'sell';
+	show_time_sold();
+	show_value_sold();
+	check_can_trade();
+	update_mode_button();
+}
 
+function update_mode_button(){
+	var btn = $('.mode_switch_button');
+	if(trade_mode == 'sell'){
+		btn.html('📤 出售模式').css('background', '#2ecc71');
+		$('.mode_hint').html('🟢 出售模式：物品 → 硬币');
+	} else {
+		btn.html('📥 购买模式').css('background', '#3498db');
+		$('.mode_hint').html('🔵 购买模式：硬币 → 物品');
+	}
+}
 
 
 
