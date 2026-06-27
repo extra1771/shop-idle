@@ -1330,7 +1330,7 @@ function test4(obj){
         var 龙角倍率 = 1 + (gamedata['龙の角'] || 0) * 0.01;
         if(恶龙力 > 99){
             var perSecond = 恶龙力 * 0.1 * 龙角倍率 * 10;
-            var maxGain = 10000000 - gamedata['恶龙之力'];
+            var maxGain = 1000000000 - gamedata['恶龙之力'];
             if(maxGain > 0){
                 var gain = Math.min(perSecond * deltaSeconds, maxGain);
                 gamedata['恶龙之力'] += gain;
@@ -1345,10 +1345,10 @@ function test4(obj){
     } else {
         var 恶龙力 = 10000;
     }
-    if (gamedata['inventory']['恶龙'] > 99 && gamedata['恶龙之力'] <= 10000000) {
+    if (gamedata['inventory']['恶龙'] > 99 && gamedata['恶龙之力'] <= 1000000000) {
         this.gamedata['恶龙之力'] += (恶龙力 * 0.1) * (1 + gamedata['龙の角'] * 0.01) * 10;
     }
-    if (gamedata['恶龙之魂'] > 1 && gamedata['恶龙之力'] <= 10000000) {
+    if (gamedata['恶龙之魂'] > 1 && gamedata['恶龙之力'] <= 1000000000) {
         this.gamedata['恶龙之力'] += (gamedata['恶龙之魂'] * 0.001) * (1 + gamedata['龙の角'] * 0.01) * 10;
     }
 
