@@ -213,15 +213,14 @@
 			</div>
 			<div class="set_counter_summary">
     <div class="summary_title">说明</div>
-    <div style="margin-bottom:10px;">
-        <button class="mode_switch_button" onclick="toggle_trade_mode()" style="padding:6px 14px;border:none;border-radius:20px;color:#fff;font-weight:bold;background:#2ecc71;cursor:pointer;">📤 出售模式</button>
-        <span class="mode_hint" style="font-size:12px;color:#888;margin-left:8px;">🟢 出售模式：物品 → 硬币</span>
+    <div style="display:flex;gap:10px;margin-bottom:12px;">
+        <button onclick="trade_mode='sell';start_selling();" style="flex:1;padding:6px 0;border:1px solid #ddd;border-radius:6px;background:#f5f5f5;color:#333;cursor:pointer;font-size:14px;text-align:center;">出售</button>
+        <button onclick="trade_mode='buy';start_selling();" style="flex:1;padding:6px 0;border:1px solid #ddd;border-radius:6px;background:#f5f5f5;color:#333;cursor:pointer;font-size:14px;text-align:center;">购买</button>
     </div>
     物品： <span class="item_sold"></span><br>
     数量： <span class="amount_sold"></span><br>
     时间： <span class="time_sold"></span><br>
-    <span class="coins_sold_label">获得硬币：</span><span class="coins_sold"></span><br>
-    <button class="start_selling_button disabled" onclick="start_selling()">开始销售</button>
+    硬币： <span class="coins_sold"></span><br>
 </div>
 		</div>
 		<div id="content_item_details_page" class="page_container">
@@ -1138,7 +1137,7 @@ function test4(obj){
     var 最高 = gamedata['龙の爪'] * 0.1;
     var 最低 = gamedata['龙の鳞'] * 0.1;
     var 倍率 = Math.random() * (2 + 最高) + (1 + 最低);
-    var 掠夺量 = Math.floor(gamedata['恶龙之力'] * 倍率) * 100;
+    var 掠夺量 = Math.floor(gamedata['恶龙之力'] * 倍率);
     
     // 使用 gain_item 增加硬币（同时更新 coins_gained）
     gain_item('coins', 掠夺量);
