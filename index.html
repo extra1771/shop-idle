@@ -1137,7 +1137,7 @@ function test4(obj){
     var 最高 = gamedata['龙の爪'] * 0.1;
     var 最低 = gamedata['龙の鳞'] * 0.1;
     var 倍率 = Math.random() * (2 + 最高) + (1 + 最低);
-    var 掠夺量 = Math.floor(gamedata['恶龙之力'] * 倍率) * 100;
+    var 掠夺量 = Math.floor(gamedata['恶龙之力'] * 倍率);
     
     // 使用 gain_item 增加硬币（同时更新 coins_gained）
     gain_item('coins', 掠夺量);
