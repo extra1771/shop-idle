@@ -213,15 +213,14 @@
 			</div>
 			<div class="set_counter_summary">
     <div class="summary_title">说明</div>
-    <div style="margin-bottom:10px;">
-        <button class="mode_switch_button" onclick="trade_mode='sell';start_selling();" style="padding:6px 14px;border:none;border-radius:20px;color:#fff;font-weight:bold;background:#2ecc71;cursor:pointer;">📤 出售</button>
-        <button class="mode_switch_button" onclick="trade_mode='buy';start_selling();" style="padding:6px 14px;border:none;border-radius:20px;color:#fff;font-weight:bold;background:#3498db;cursor:pointer;">📥 购买</button>
+    <div style="margin-bottom:10px;display:flex;gap:10px;">
+        <button onclick="trade_mode='sell';start_selling();" style="flex:1;padding:8px 0;border:none;border-radius:20px;color:#fff;font-weight:bold;background:#2ecc71;cursor:pointer;font-size:15px;">📤 出售</button>
+        <button onclick="trade_mode='buy';start_selling();" style="flex:1;padding:8px 0;border:none;border-radius:20px;color:#fff;font-weight:bold;background:#3498db;cursor:pointer;font-size:15px;">📥 购买</button>
     </div>
     物品： <span class="item_sold"></span><br>
     数量： <span class="amount_sold"></span><br>
     时间： <span class="time_sold"></span><br>
     <span class="coins_sold_label">获得硬币：</span><span class="coins_sold"></span><br>
-    <button class="start_selling_button disabled" onclick="start_selling()">开始交易</button>
 </div>
 		</div>
 		<div id="content_item_details_page" class="page_container">
