@@ -103,10 +103,10 @@
           <div id="div4"class="list">
 		  <div class="home_devider">存档管理【手机更新可能会丢失数据，记得多多备份。存档不规范，两眼泪汪汪。】</div>
 
-            <button id="存档管理1" class="hide2"  onclick="存档管理()">导出【复制保存起来】</button>	
-            <button id="存档管理2" class="hide2"  onclick="读档管理()">导入【小心确定！】</button>	
+            <button id="存档管理1" class="hide2"  onclick="存档管理()">导出</button>	
+            <button id="存档管理2" class="hide2"  onclick="读档管理()">导入</button>	
             <button id="存档管理4" class="hide2"  onclick="提取管理()">提取保存TXT</button>				
-            <button id="存档管理5" class="hide2"  onclick="提取备份管理()">导入备份得存档【如果遇到丢失游戏马上用这个】</button>						
+            <button id="存档管理5" class="hide2"  onclick="提取备份管理()">导入备份得存档【游戏每10m自动备份】</button>						
              <div class="home_devider">下方存档点【把存档粘贴进去在导入！！！】 </div>
              <input type="text"id="存档管理3"  style="height:20px;width:500px;" value="" />
 
@@ -866,37 +866,61 @@
 
 
 
-	function 读档管理(){ 
-	if (!window.confirm("你确定? 这将覆盖的存档？【存档错误可能会卡死！】")){
-			return;
-		}
-    if (gamedata['版本']<=2.4){		
-      var input = document.getElementById("存档管理3").value;
-	  
-	  if(input){  
-	  
-	  var inputtxt = decodeURIComponent(escape(atob(input)));
-	  
-	    window.localStorage.setItem("newgame", ""+inputtxt+"");
-		 window.location.href = window.location.href;		
-	}
-	}else{!window.confirm("存档版本太新了")}
-	
-	
-	};
+	function 读档管理(){
+    if (!window.confirm("导入将覆盖当前存档，确定吗？")){
+        return;
+    }
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.txt';
+    input.onchange = function(e){
+        var file = e.target.files[0];
+        if(!file){
+            alert("未选择文件");
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(ev){
+            try{
+                var data = ev.target.result;
+                // 检测是否为 Base64 编码的旧存档（兼容）
+                var decoded = data;
+                if(data.match(/^[A-Za-z0-9+/=]+$/)){
+                    try{
+                        decoded = decodeURIComponent(escape(atob(data)));
+                    } catch(e){
+                        decoded = data;
+                    }
+                }
+                window.localStorage.setItem("newgame", decoded);
+                alert("导入成功，即将刷新页面");
+                window.location.reload();
+            } catch(err){
+                alert("导入失败：" + err.message);
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+};
 	
     function 存档管理(){
-	     //saveToLocalStorage();
-	    var text = window.localStorage["newgame"];	
-        var input = document.getElementById("存档管理3");
-		
-        var txt = btoa(unescape(encodeURIComponent(text.toString())));		
-	 
-          input.value = txt; 
-          input.select(); 
-          document.execCommand("copy"); 
-          alert("复制成功，建议吧存档保存到安全的地方！");  
-	};
+    var text = window.localStorage["newgame"];
+    if(!text){
+        alert("没有存档数据！");
+        return;
+    }
+    // 直接保存为 .txt 文件（不编码）
+    var blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'game_save.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+    alert("存档已导出为 game_save.txt");
+};
 	
 	 function 提取管理() {
 
