@@ -105,10 +105,10 @@
 
             <button id="存档管理1" class="hide2"  onclick="存档管理()">导出</button>	
             <button id="存档管理2" class="hide2"  onclick="读档管理()">导入</button>	
-            <button id="存档管理4" class="hide2"  onclick="提取管理()">提取保存TXT</button>				
+            <!-- <button id="存档管理4" class="hide2" onclick="提取管理()">提取保存TXT</button> -->				
             <button id="存档管理5" class="hide2"  onclick="提取备份管理()">导入备份得存档【游戏每10m自动备份】</button>						
-             <div class="home_devider">下方存档点【把存档粘贴进去在导入！！！】 </div>
-             <input type="text"id="存档管理3"  style="height:20px;width:500px;" value="" />
+             <!-- <div class="home_devider">下方存档点【把存档粘贴进去在导入！！！】 </div> -->
+<!-- <input type="text"id="存档管理3" style="height:20px;width:500px;" value="" /> -->
 
           </div>	
 		</div>		
@@ -910,16 +910,25 @@
         alert("没有存档数据！");
         return;
     }
-    // 直接保存为 .txt 文件（不编码）
+    // 生成当前时间字符串：2026-06-28_15-30-00
+    var now = new Date();
+    var timeStr = now.getFullYear() + '-' 
+                + String(now.getMonth()+1).padStart(2,'0') + '-' 
+                + String(now.getDate()).padStart(2,'0') + '_' 
+                + String(now.getHours()).padStart(2,'0') + '-' 
+                + String(now.getMinutes()).padStart(2,'0') + '-' 
+                + String(now.getSeconds()).padStart(2,'0');
+    var filename = 'game_save_' + timeStr + '.txt';
+    
     var blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
     var link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
-    link.download = 'game_save.txt';
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(link.href);
-    alert("存档已导出为 game_save.txt");
+    alert('存档已导出为 ' + filename);
 };
 	
 	 function 提取管理() {
