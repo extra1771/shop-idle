@@ -373,29 +373,20 @@ function check_can_trade(){
 }
 
 function start_selling(){
-	if(!check_can_trade()) return;
-	
-	var quantity = to_the_tenth(1,selling_amount);
-	var total_cost = quantity * available_items[selling_item]['value'];
-	
-	if(trade_mode == 'sell'){
-		gain_item(selling_item, -quantity);
-		gamedata['counters'][current_counter] = {
-			item_id: selling_item,
-			item_amount: quantity,
-			done_time: current_time(),
-			mode: 'sell'
-		};
-	} else {
-		gamedata['coins'] -= total_cost;
-		gamedata['counters'][current_counter] = {
-			item_id: selling_item,
-			item_amount: quantity,
-			done_time: current_time(),
-			mode: 'buy'
-		};
-	}
-	show_content('home');
+    if(!check_can_trade()) return;
+    
+    var quantity = to_the_tenth(1,selling_amount);
+    var total_cost = quantity * available_items[selling_item]['value'];
+    
+    if(trade_mode == 'sell'){
+        gain_item(selling_item, -quantity);   // 扣除物品
+        gain_item('coins', total_cost);        // 获得硬币
+    } else {
+        gain_item('coins', -total_cost);       // 扣除硬币
+        gain_item(selling_item, quantity);     // 获得物品
+    }
+    // 回到商店主页
+    show_content('home');
 }
 
 function calculate_item_sell_time(value, rarity){
@@ -451,13 +442,9 @@ function update_counter_timers(){
 	counter['done_time'] += items_sold * item_time;
 	
 	if($('#content_home').hasClass('active'))
-	{
-		var value = available_items[counter['item_id']]['value'] * items_sold;
-var sign = (counter['mode'] == 'buy') ? '-' : '+';
-var parsed_floating_text = parse_floating_text(action_text + ' ' + sign + nFormatter(value, 1), 'rgba(240, 230, 48,1)');
-		$('.counter_' + counter_id).append(parsed_floating_text);
-		$('.counter_' + counter_id + ' .counter_item_count').html('x' + nFormatter(counter['item_amount'], 3));
-	}
+{
+    $('.counter_' + counter_id + ' .counter_item_count').html('x' + nFormatter(counter['item_amount'], 3));
+}
 }
 
 						var time_to_sale = Math.ceil(item_time - time_left);
